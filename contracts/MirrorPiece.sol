@@ -18,7 +18,7 @@ contract MirrorPiece is Ownable, IERC2981, ERC721, ERC721URIStorage, ContextMixi
     uint256 public royaltyPercentage;
 
     modifier onlyOwnerOrController() {
-        require(msg.sender == owner() || msg.sender == controller, "Must be gravedigger");
+        require(msg.sender == owner() || msg.sender == controller, "Must be owner or controller");
         _;
     }
 
