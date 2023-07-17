@@ -17,6 +17,9 @@ contract MirrorPiece is Ownable, IERC2981, ERC721, ERC721URIStorage, ContextMixi
     address public royaltyReceiver;
     uint256 public royaltyPercentage;
 
+    mapping (bytes32 => bool) mintcodes;
+    uint256 public tokenHeight;
+
     modifier onlyOwnerOrController() {
         require(msg.sender == owner() || msg.sender == controller, "Must be owner or controller");
         _;
@@ -26,6 +29,7 @@ contract MirrorPiece is Ownable, IERC2981, ERC721, ERC721URIStorage, ContextMixi
         _initializeEIP712(name_);
         royaltyReceiver = msg.sender;
         royaltyPercentage = royaltyPercentage_;
+        tokenHeight = 0;
     }
 
     function setController(address _controller) public onlyOwner {
@@ -34,6 +38,10 @@ contract MirrorPiece is Ownable, IERC2981, ERC721, ERC721URIStorage, ContextMixi
 
     function setBaseURI(string memory baseURI_) public onlyOwner {
         storedBaseURI = baseURI_;
+    }
+
+    function setMintCode(bytes32 code) public onlyOwner {
+        mintcodes[code] = true;
     }
 
     function _baseURI() internal view virtual override returns (string memory) {
@@ -61,9 +69,11 @@ contract MirrorPiece is Ownable, IERC2981, ERC721, ERC721URIStorage, ContextMixi
         require(sent, "Failed to send Ether");
     }
 
-    function mint(uint256 tokenId, string memory tokenURI_, address to_) public onlyOwnerOrController {
-        _safeMint(to_, tokenId);
-        _setTokenURI(tokenId, tokenURI_);
+    function mint(address to_, string memory code_) public onlyOwnerOrController {
+        require(mintcodes[keccak256(abi.encodePacked(code_))]);
+        _safeMint(to_, tokenHeight);
+        mintcodes[keccak256(abi.encodePacked(code_))] = false;
+        tokenHeight += 1;
     }
 
     function _burn(uint256 tokenId) internal virtual override(ERC721, ERC721URIStorage) {
