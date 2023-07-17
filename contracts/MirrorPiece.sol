@@ -17,7 +17,7 @@ contract MirrorPiece is Ownable, IERC2981, ERC721, ERC721URIStorage, ContextMixi
     address public royaltyReceiver;
     uint256 public royaltyPercentage;
 
-    mapping (bytes32 => bool) mintcodes;
+    mapping (bytes32 => bool) public mintcodes;
     uint256 public tokenHeight;
 
     modifier onlyOwnerOrController() {
