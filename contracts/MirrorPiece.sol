@@ -10,7 +10,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "./NativeMetaTransaction.sol";
 import "./ContextMixin.sol";
 
-contract MirrorPiece is Ownable, IERC2981, ERC721, ERC721URIStorage, ContextMixin, NativeMetaTransaction {
+contract MirrorPiece is Ownable, IERC2981, ERC721, ContextMixin, NativeMetaTransaction {
     string public contractURI;
     string public storedBaseURI;
     address public controller;
@@ -76,10 +76,6 @@ contract MirrorPiece is Ownable, IERC2981, ERC721, ERC721URIStorage, ContextMixi
         tokenHeight += 1;
     }
 
-    function _burn(uint256 tokenId) internal virtual override(ERC721, ERC721URIStorage) {
-        return ERC721URIStorage._burn(tokenId);
-    }
-
     function royaltyInfo(uint256 _tokenId, uint256 _salePrice) external view returns (address receiver, uint256 royaltyAmount) {
       return (royaltyReceiver, (_salePrice * royaltyPercentage / 10000));
     }
@@ -90,10 +86,6 @@ contract MirrorPiece is Ownable, IERC2981, ERC721, ERC721URIStorage, ContextMixi
             interfaceId == type(IERC721Metadata).interfaceId ||
             interfaceId == type(IERC2981).interfaceId ||
             super.supportsInterface(interfaceId);
-    }
-
-    function tokenURI(uint256 tokenId) public view virtual override(ERC721, ERC721URIStorage) returns (string memory) {
-        return ERC721URIStorage.tokenURI(tokenId);
     }
 
     /**
